@@ -8,21 +8,24 @@ export const typeDefs = `
     phone: String
     website: String
     avatar: String
+    posts: [Post!]!
   }
 
+  input User_filter {
+    _id: String
+  }
   
   type Query {
-    Users:[User]
-    User(id:ID!):User
+    GetUsers(filter: User_filter):[User]
+    GetUserById(id:ID!):User
+    GetAllPost: [Post!]!
     }
 
-    type Query {
-      GetUserPosts(userId: ID!): [Post!]!
-    }
-
+ 
     input CreateUser {
       name: String!
       email: String!
+      password: String!
     }
 
     type DeleteUserResponse {
@@ -34,7 +37,7 @@ export const typeDefs = `
       id: ID!
       title: String!
       content: String!
-      author: User!
+      #author: User!
     }
 
    
@@ -46,13 +49,14 @@ export const typeDefs = `
   }  
   
   type Mutation {
-    Login(email: String!, password:String!): String
+    Login(email: String!, password:String!): String!
   }
   
   type Mutation {
-    CreatePost(title: String!, content: String!, authorId: ID!): Post
+    CreatePost(title: String!, content: String!, authorId: ID!): Post!
   }
 
 `;
 
 
+// createdAt: String!

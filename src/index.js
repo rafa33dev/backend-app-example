@@ -3,7 +3,7 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import  Jwt  from "jsonwebtoken";
 import { typeDefs } from "./SchemaUSer/typedefsUser.js";
 import { resolvers } from "./SchemaUSer/ResolverUser.js";
-
+import { connection } from "./data/dbConnect.js";
 const server = new ApolloServer({
   typeDefs,
   resolvers,
@@ -28,3 +28,5 @@ const { url } = await startStandaloneServer(server, {
 });
 
 console.log(`🚀  Server ready at: ${url}gql`);
+
+connection()

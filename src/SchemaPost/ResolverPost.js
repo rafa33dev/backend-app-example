@@ -1,23 +1,30 @@
-import { posts } from "../data/postUserData.js"
-import { users } from "../data/data.js"
+import Post from "../models/Post.js"
+import User from "../models/User.js"
 
- export const createPost = (title, content, authorId) => {
+ export const createPost = async (title, content, authorId) => {
+   
+   
+   try {
+    const user = await User.findById(authorId)
+    if (!user) {
+      throw new Error('no se encontro el usuario')
+    }
 
-  const author = users.find(user => user.id.toString() === authorId)
-  if (!author) {
-    throw new Error('el autor no existe')
+    const post = new Post({
+      title,
+      content,
+      author: user._id,
+    })
+
+    await post.save()
+    user.posts.push(post)
+    await user.save()
+    
+    
+    return post 
+  } catch (error) {
+    throw new Error('error al crear el post ',error)
   }
-
-  const newPost = {id: String(posts.length + 1), title, content, author}
-  posts.push(newPost)
-  return newPost
+ 
 }
 
-export const getUserPosts = (userId) => {
-  const user = users.find(user => user.id === userId)
-  if (!user) {
-    throw new Error('usuario no encontrado')
-  }
-
-  return posts.filter(post => post.author.id === userId)
-}
