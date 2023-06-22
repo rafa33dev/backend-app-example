@@ -4,29 +4,39 @@ import  Jwt  from "jsonwebtoken";
 import { typeDefs } from "./SchemaUSer/typedefsUser.js";
 import { resolvers } from "./SchemaUSer/ResolverUser.js";
 import { connection } from "./data/dbConnect.js";
+
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: ({req}) => {
-    const token = req.headers.authorization
+    const token = req.headers.authorization  
 
-    if (!token) {
-      throw new Error('no se proporciono un token ')
-    }
-
+     let userId = null
+     let role = null
     try {
-      const decoded = Jwt.verify(token, 'secret')
-      return {userId: decoded.userId}
+      const decoded = Jwt.verify(token, 'secret123')
+      userId =  decoded.userId
+      role = decoded.role
     } catch (error) {
       throw new Error('token invalido o expirado')
     }
+    return {
+      userId,
+      role,
+      db: connection(),
+    };
   }
-});
+  
+}, 
+);
+
+
 
 const { url } = await startStandaloneServer(server, {
   listen: { port: 4000 },
 });
 
-console.log(`🚀  Server ready at: ${url}gql`);
+console.log(`🚀  Server ready at: ${url}`);
 
 connection()

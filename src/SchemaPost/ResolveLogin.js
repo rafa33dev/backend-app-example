@@ -12,7 +12,7 @@ export const login = async (email, password) => {
   }
 
   const token = Jwt.sign(
-    {userId: user._id, name: user.name, email: user.email},
+    {userId: user._id, name: user.name, email: user.email, role: user.role},
     "secret123",
     { expiresIn: "1h"}
     )

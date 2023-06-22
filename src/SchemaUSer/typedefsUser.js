@@ -1,14 +1,15 @@
 export const typeDefs = `
+ directive @hasRole(roles: [String!]!) on FIELD_DEFINITION
 
   type User {
     id: ID
     name: String
     username: String
     email: String
-    phone: String
     website: String
     avatar: String
     posts: [Post!]!
+    role: String!
   }
 
   input User_filter {
@@ -16,16 +17,26 @@ export const typeDefs = `
   }
   
   type Query {
-    GetUsers(filter: User_filter):[User]
-    GetUserById(id:ID!):User
+    GetUsers(filter: User_filter):[User]! @hasRole(roles:["admin"])
+    GetUserById(id:ID!):User @hasRole(roles:["admin"])
     GetAllPost: [Post!]!
+    AdminOnly: String! @hasRole(roles: ["admin"])
+    Comment: [Comment!]!
+    Post: [Post!]!
     }
-
+    
+    enum UserRole {
+      admin
+      usuario
+    }
  
     input CreateUser {
       name: String!
+      username: String
       email: String!
+      website: String!
       password: String!
+      role: UserRole
     }
 
     type DeleteUserResponse {
@@ -37,14 +48,22 @@ export const typeDefs = `
       id: ID!
       title: String!
       content: String!
-      #author: User!
+      createdAt: String!
+      Comments: [Comment!]!
     }
-
+   
+    type Comment {
+      id: ID!
+      content: String!
+      createdAt: String!
+      user: User!
+      post: Post!
+    }
    
 
   type Mutation{
    CreateUser(input:CreateUser!): User
-   updateUser(id: ID!, name: String!): User
+   updateUser(id: ID!, name: String!, role: String!): User
    DeleteUser(id:ID!) : DeleteUserResponse
   }  
   
@@ -54,9 +73,17 @@ export const typeDefs = `
   
   type Mutation {
     CreatePost(title: String!, content: String!, authorId: ID!): Post!
+    DeletePost(id: ID!): String
+    CreateComment(postId: ID!, content: String!, userId: ID!): Comment!
   }
+
 
 `;
 
 
-// createdAt: String!
+
+// type Mutation {
+//   createUser(name: String!, email: String!, password: String!): User!  # Mutación accesible para todos los roles
+//   updateUser(id: ID!, name: String!, email: String!): User! @hasRole(roles: ["admin"])  # Ejemplo de mutación que requiere rol de administrador
+//   deleteUser(id: ID!): User! @hasRole(roles: ["admin"])  # Ejemplo de mutación que requiere rol de administrador
+// }

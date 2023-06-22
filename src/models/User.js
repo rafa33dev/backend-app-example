@@ -18,19 +18,10 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Post'
     }],
-    address: {
-      street: {
-        type: String,
-      },
-      suite: {
-        type: String,
-      },
-      city: {
-        type: String,
-      },
-      zipcode: {
-        type: String,
-      },
+    role: {
+      type: String,
+      enum: ['admin', 'usuario'],
+      default: 'usuario',
     },
     password: {
       type: String,
