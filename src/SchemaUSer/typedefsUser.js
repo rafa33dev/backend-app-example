@@ -21,8 +21,8 @@ export const typeDefs = `
     GetUserById(id:ID!):User @hasRole(roles:["admin"])
     GetAllPost: [Post!]!
     AdminOnly: String! @hasRole(roles: ["admin"])
+    Post(id:ID): Post
     Comment: [Comment!]!
-    Post: [Post!]!
     }
     
     enum UserRole {
@@ -56,7 +56,6 @@ export const typeDefs = `
       id: ID!
       content: String!
       createdAt: String!
-      user: User!
       post: Post!
     }
    

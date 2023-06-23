@@ -8,7 +8,6 @@ export const resolvers = {
   Query: {
     GetUsers: async (_, { filter = {} }) => {
       try {
-        console.log(filter);
         const { _id } = filter;
         const query = {};
 
@@ -47,8 +46,8 @@ export const resolvers = {
     },
 
     Post: {
-      user: async (parent) => User.findById(parent.userId),
-      comments: async (parent) => Comment.findOne({ comment: parent.id }),
+      //user: async (parent) => User.findById(parent.userId),
+      comments: async (parent) => await Comment.find({ post: parent.id }),
     },
 
     AdminOnly: async (parent, args, { userId, role }) => {
@@ -120,7 +119,7 @@ export const resolvers = {
     },
 
     CreateComment: async (_, { postId, content, userId }) => {
-      console.log(content);
+      
       try {
         const comment = new Comment({
           content,
