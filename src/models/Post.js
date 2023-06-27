@@ -16,11 +16,18 @@ const postSchema = new mongoose.Schema(
       type: String,
       ref: 'User',
       required: true
-    }
+    },
+
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+      }
+    ]
   },
   {
     timestamps: true,
-    versionKey: false
+    versionKey: false,
   }
 );
 

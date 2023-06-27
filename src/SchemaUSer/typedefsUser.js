@@ -8,7 +8,7 @@ export const typeDefs = `
     email: String
     website: String
     avatar: String
-    posts: [Post!]!
+    posts: [Post!]
     role: String!
   }
 
@@ -21,8 +21,9 @@ export const typeDefs = `
     GetUserById(id:ID!):User @hasRole(roles:["admin"])
     GetAllPost: [Post!]!
     AdminOnly: String! @hasRole(roles: ["admin"])
-    Post(id:ID): Post
-    Comment: [Comment!]!
+    Post(id:ID!): Post!
+    Comment(id: ID!) : Comment
+    GetPostComments(postId: ID!): [Comment]
     }
     
     enum UserRole {
@@ -45,18 +46,22 @@ export const typeDefs = `
     }
     
     type Post {
-      id: ID!
-      title: String!
-      content: String!
-      createdAt: String!
-      Comments: [Comment!]!
+      id: ID
+      title: String
+      content: String
+      author: User
+      comments: [Comment!]
+      createdAt: String
+      updatedAt: String
+
     }
    
     type Comment {
-      id: ID!
-      content: String!
-      createdAt: String!
-      post: Post!
+      id: ID
+      content: String
+      author: User
+      createdAt: String
+      updatedAt: String
     }
    
 

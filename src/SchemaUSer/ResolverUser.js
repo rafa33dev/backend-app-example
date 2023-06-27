@@ -40,15 +40,45 @@ export const resolvers = {
       }
     },
 
-    Comment: {
-      user: async (parent) => await User.findById(parent.userId),
-      post: async (parent) => await Post.findOne({ post: parent.postId }),
+    GetPostComments: async (_, { postId }) => {
+      // const post =  await
+      // if(!post) {
+      //   throw new Error('no se encontro el post')
+      // }
+      // return post
     },
 
-    Post: {
-      //user: async (parent) => User.findById(parent.userId),
-      comments: async (parent) => await Comment.find({ post: parent.id }),
+    Comment: {
+      author: async (parent) => {
+        console.log(parent);
+        try {
+          const authorId = parent.authorId;
+          const user = await User.findOne({ _id: authorId });
+          return user || {}; // Devuelve un objeto vacío si no se encuentra el autor
+        } catch (error) {
+          throw new Error(
+            "No se pudo encontrar el usuario asociado al comentario."
+          );
+        }
+      },
     },
+
+    Post: async (_, { id }) => {
+      try {
+        const post = await Post.findById(id).populate("comments");
+
+        return post;
+      } catch (error) {
+        console.error("Error al obtener el post:", error);
+        throw new Error("No se pudo obtener el post", error);
+      }
+      // if (!post) {
+      //   throw new Error('no se encunbtra el post')
+      // }
+    },
+
+    //user: async (parent) => User.findById(parent.userId),
+    //comments: async (parent) => await Comment.find({ post: parent.id }),
 
     AdminOnly: async (parent, args, { userId, role }) => {
       if (role !== "admin") {
@@ -58,6 +88,23 @@ export const resolvers = {
     },
   },
 
+  Post: {
+    comments: async (parent) => {
+      try {
+        let rs = await Promise.all(parent.comments.map(async (comment)=>{
+          const author = await User.findOne({_id: comment.userId})
+          comment = {...comment._doc, author}
+          return comment
+        }))
+        console.log(rs);
+
+        return rs
+      } catch (error) {
+        console.error("Error al obtener los comentarios:", error);
+        throw new Error("No se pudieron obtener los comentarios", error);
+      }
+    },
+  },
   Mutation: {
     CreateUser: async (_, { input }) => {
       console.log(input);
@@ -119,15 +166,23 @@ export const resolvers = {
     },
 
     CreateComment: async (_, { postId, content, userId }) => {
-      
+      const post = await Post.findById(postId);
+
+      if (!post) {
+        throw new Error("Nose encontro el post");
+      }
+
       try {
         const comment = new Comment({
           content,
           postId,
           userId,
         });
-
         await comment.save();
+        post.comments = post.comments.concat(comment);
+
+        console.log(post.comments);
+        await post.save();
         return comment;
       } catch (error) {
         console.error("Error al crear el comentario:", error);
