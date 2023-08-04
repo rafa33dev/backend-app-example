@@ -2,6 +2,7 @@ import mongoose, { Schema, model } from "mongoose"
 
 const userSchema = new mongoose.Schema(
   {
+    _id: mongoose.Schema.Types.ObjectId,
     name: {
       type: String,
       required: true,
@@ -18,6 +19,13 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Post'
     }],
+
+    avatar: {
+      type: String
+    },
+    website: {
+      type: String
+    },
     role: {
       type: String,
       enum: ['admin', 'usuario'],

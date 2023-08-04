@@ -1,6 +1,7 @@
 import Post from "../models/Post.js"
 import User from "../models/User.js"
-
+import { PubSub } from "graphql-subscriptions"
+const pubsub = new PubSub()
  export const createPost = async (title, content, authorId) => {
    
    
@@ -19,7 +20,8 @@ import User from "../models/User.js"
     await post.save()
     user.posts.push(post)
     await user.save()
-    
+     
+    pubsub.publish('NEW_POST', {NewPost: post})
     
     return post 
   } catch (error) {

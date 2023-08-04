@@ -13,16 +13,27 @@ const postSchema = new mongoose.Schema(
     },
 
     author: {
-      type: String,
-      ref: 'User',
-      required: true
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+      },
+
+      name: {
+        type: String
+      },
+
+      avatar: {
+        type: String
+      }
     },
 
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment'
-      }
+        ref: 'Comment',
+      },
+    
     ]
   },
   {
